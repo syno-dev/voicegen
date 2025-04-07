@@ -40,6 +40,20 @@ record.sh
 
 Or use your preferred recording method.
 
+#### Voice sample requirements
+
+To ensure the model works properly, your sample.wav file must meet the following criteria:
+
+- Format: WAV (PCM)
+- Channels: Mono (1)
+- Sample rate: 16,000 Hz (16 kHz)
+- Duration: At least 5–10 seconds is recommended
+
+You can use longer samples (e.g., 15–30 seconds) for potentially better results, but:
+- Processing will take longer
+- Very long samples (over 1 minute) might reduce quality due to noise or voice drift
+
+
 ### 3. Provide the text
 
 Edit or create a file named `text.txt` in the project root.  
