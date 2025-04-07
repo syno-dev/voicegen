@@ -7,25 +7,29 @@ CHANNELS=1     # mono audio
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 OUTPUT="sample_${TIMESTAMP}.wav"
 
-echo "🎙️ Detecting operating system..."
-
 OS="$(uname)"
+FFMPEG_INPUT=""
 
 if [ "$OS" == "Darwin" ]; then
-    # macOS - use AVFoundation
-    echo "🧠 macOS detected. Using AVFoundation (default mic)."
-    INPUT_DEVICE=":1"
-    FFMPEG_INPUT="-f avfoundation -i ${INPUT_DEVICE}"
+    echo "🧠 macOS detected."
+
+    if ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | grep -q '\[0\] Microsoft Teams Audio'; then
+        echo "❗ [0] is Microsoft Teams Audio → using :1"
+        DEVICE_INDEX=1
+    else
+        DEVICE_INDEX=0
+    fi
+
+    FFMPEG_INPUT="-f avfoundation -i :$DEVICE_INDEX"
+
 elif [ "$OS" == "Linux" ]; then
-    # Linux - try ALSA first
+    echo "🧠 Linux detected."
     if command -v arecord >/dev/null 2>&1; then
-        echo "🧠 Linux detected. Using ALSA (default mic)."
         FFMPEG_INPUT="-f alsa -i default"
     elif command -v pactl >/dev/null 2>&1; then
-        echo "🧠 Linux detected. Using PulseAudio (default mic)."
         FFMPEG_INPUT="-f pulse -i default"
     else
-        echo "❌ No supported audio input system found (ALSA or PulseAudio required)."
+        echo "❌ No supported Linux audio system found (ALSA or PulseAudio)."
         exit 1
     fi
 else
@@ -46,7 +50,6 @@ fi
 echo "✅ Saved as $OUTPUT"
 
 cp "$OUTPUT" sample.wav
-
 echo "📎 Copied to sample.wav for the model"
 
 exit 0
