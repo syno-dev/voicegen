@@ -1,0 +1,10 @@
+# Install PyTorch and torchaudio from the PyTorch CPU index
+torch --index-url https://download.pytorch.org/whl/cpu
+torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install specific version of sudachipy
+sudachipy==0.6.7 --prefer-binary
+
+# Install TTS and soundfile
+TTS
+soundfile

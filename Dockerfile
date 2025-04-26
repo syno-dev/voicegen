@@ -19,13 +19,12 @@ RUN apt-get update && apt-get install -y \
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
+COPY requirements.txt /app/requirements.txt
+
 RUN pip install --upgrade pip
 
-RUN pip install --no-cache-dir torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-RUN pip install --no-cache-dir sudachipy==0.6.7 --prefer-binary
-
-RUN pip install --no-cache-dir TTS soundfile
 
 WORKDIR /app
 COPY clone_voice.py /app/clone_voice.py
