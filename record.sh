@@ -74,13 +74,21 @@ if [[ -z "$DURATION" ]]; then
     exit 1
 fi
 
+# Check if ffmpeg is installed
+if ! command -v ffmpeg >/dev/null 2>&1; then
+    echo "❌ ffmpeg is not installed. Please install it first."
+    exit 1
+fi
+
 # Function to set FFMPEG input for macOS
 set_ffmpeg_input_mac() {
-    if [ "$DEVICE_INDEX" -eq 1 ]; then
+    if ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | grep -q '\[0\] Microsoft Teams Audio'; then
+        echo "❗ [0] is Microsoft Teams Audio → using :1"
         DEVICE_INDEX=1
     else
         DEVICE_INDEX=0
     fi
+
     FFMPEG_INPUT="-f avfoundation -i :$DEVICE_INDEX"
 }
 
@@ -116,7 +124,7 @@ esac
 echo "🎙️ Recording microphone sample (duration: ${DURATION}s) in 1s..."
 sleep 1
 
-ffmpeg $FFMPEG_INPUT -ac "$CHANNELS" -ar "$RATE" -t "$DURATION" "$OUTPUT"
+ffmpeg -y $FFMPEG_INPUT -ac "$CHANNELS" -ar "$RATE" -t "$DURATION" "$OUTPUT"
 
 # Check if recording succeeded
 if [ $? -ne 0 ]; then
