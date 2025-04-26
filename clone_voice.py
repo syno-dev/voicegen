@@ -19,5 +19,5 @@ tts.tts_to_file(
     text=text,
     speaker_wav=reference_audio,
     language="en",
-    file_path="output.wav"
+    file_path="tts_output.wav"
 )
